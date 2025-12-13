@@ -73,3 +73,10 @@
 /workgroups/
 /.idea/
 /vendor/
+/.osp/
+/_decode/
+/collaboration/
+/info.php
+/online/
+/vibe/
+/vote-result/
