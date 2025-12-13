@@ -9,7 +9,7 @@ $APPLICATION->SetTitle("Ошибка для exeption");
 </ul>
 <?
 // ошибка для exeption
-
+throw new Exception("Test exeption");
 ?>
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
