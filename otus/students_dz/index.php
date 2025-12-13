@@ -2,6 +2,7 @@
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
+/** @var \CMain $APPLICATION */
 $APPLICATION->SetTitle("Список Домашних работ");
 
 Asset::getInstance()->addCss('//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
@@ -39,7 +40,7 @@ Asset::getInstance()->addCss('//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bo
     <section class="container-fluid">
 
         <h1 class="mb-3"><? $APPLICATION->ShowTitle() ?></h1>
-        <div class="mb-3">Репозиторий: <a href="https://github.com/">https://github.com/</a> указать URL своего репозитория</div>
+        <div class="mb-3">Репозиторий: <a href="https://github.com/itrukhin/otus-2025">https://github.com/itrukhin/otus-2025</a> указать URL своего репозитория</div>
         <ul class="item-list">
             <li>
                 <h2 class="item done">

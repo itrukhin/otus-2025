@@ -1,5 +1,9 @@
-<? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
+<?
+use Bitrix\Main\Diag\Debug;
+
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
+/** @var CMain $APPLICATION */
 $APPLICATION->SetTitle("Добавление в лог");
 ?>
     <ul class="list-group">
@@ -10,6 +14,11 @@ $APPLICATION->SetTitle("Добавление в лог");
     </ul>
 <?
 // ТУТ ДОБАВИТЬ СВОЮ ФУНКЦИЮ ДОБАВЛЕНИЯ В ЛОГ
+Debug::writeToFile(
+        'Open page writelog.php',
+        '',
+        'local/logs/log_custom.log'
+);
 
 ?>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
