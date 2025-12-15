@@ -6,6 +6,10 @@ use Bitrix\Main\Diag\FileExceptionHandlerLog;
 
 class Log extends FileExceptionHandlerLog
 {
+    /**
+     * в родительском классе $level имеет приватный доступ
+     * @var int $logLevel
+     */
     private $logLevel;
 
     /**
@@ -26,7 +30,7 @@ class Log extends FileExceptionHandlerLog
      * @param \Throwable $exception
      * @param int $logType
      */
-    public function write($exception, $logType)
+    public function write($exception, $logType): void
     {
         $text = ExceptionHandlerFormatter::format($exception, false, $this->logLevel);
 
@@ -35,8 +39,9 @@ class Log extends FileExceptionHandlerLog
         ];
 
         $logLevel = static::logTypeToLevel($logType);
+        dump($exception);
 
-        $message = "{date} - Host: {host} - {type} - {$text}\n";
+        $message = "OTUS: {date} - Host: {host} - {type} - {$text}\n";
 
         $this->logger->log($logLevel, $message, $context);
     }
