@@ -8,7 +8,7 @@ $APPLICATION->SetTitle("Ошибка для exeption");
     </li>
 </ul>
 <?
-$debug = new App\Debug();
+$debug = new App\Debug\Log();
 $debug->test();
 // ошибка для exeption
 throw new Exception("Test exeption");
