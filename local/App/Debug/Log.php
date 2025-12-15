@@ -39,7 +39,6 @@ class Log extends FileExceptionHandlerLog
         ];
 
         $logLevel = static::logTypeToLevel($logType);
-        dump($exception);
 
         $message = "OTUS: {date} - Host: {host} - {type} - {$text}\n";
 
