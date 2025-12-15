@@ -45,4 +45,9 @@ class Log extends FileExceptionHandlerLog
 
         $this->logger->log($logLevel, $message, $context);
     }
+
+    public function test()
+    {
+        dump($_SERVER);
+    }
 }
