@@ -39,7 +39,7 @@ Asset::getInstance()->addCss('//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bo
         <a href="clearexception.php">Очистить лог из п2 ДЗ</a>
     </li>
     <li class="list-group-item">
-        <a href="/bitrix/admin/fileman_file_edit.php?path=%2Flocal%2Fphp_interface%2Fsrc%2FOtus%2FDiag%2FFileExceptionHanlderLogCustom.php&full_src=Y">Файл с классом системного исключений</a>
+        <a href="/bitrix/admin/fileman_file_edit.php?path=%2Flocal%2FApp%2FDebug%2FFileExceptionHandlerLogCustom.php&full_src=Y&site=s1&lang=ru&&filter=Y&set_filter=Y">Файл с классом системного исключений</a>
     </li>
 </ul>
 

@@ -14,11 +14,6 @@ $APPLICATION->SetTitle("Добавление в лог");
     </ul>
 <?
 // ТУТ ДОБАВИТЬ СВОЮ ФУНКЦИЮ ДОБАВЛЕНИЯ В ЛОГ
-Debug::writeToFile(
-        'Open page writelog.php',
-        '',
-        'local/logs/log_custom.log'
-);
-
+\App\Debug\Log::addLog('Open page writelog.php');
 ?>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>

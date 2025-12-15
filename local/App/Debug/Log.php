@@ -1,52 +1,34 @@
 <?php
 namespace App\Debug;
 
-use Bitrix\Main\Diag\ExceptionHandlerFormatter;
-use Bitrix\Main\Diag\FileExceptionHandlerLog;
+use Bitrix\Main\Diag\Debug;
 
-class Log extends FileExceptionHandlerLog
+class Log
 {
     /**
-     * в родительском классе $level имеет приватный доступ
-     * @var int $logLevel
-     */
-    private $logLevel;
-
-    /**
-     * @param array $options
+     * @param $message
+     * @param bool $clear
+     * @param string $fileName
      * @return void
      */
-    public function initialize(array $options): void
+    public static function addLog($message, bool $clear = false, string $fileName = 'custom'): void
     {
-        parent::initialize($options);
-
-        if (isset($options["level"]) && $options["level"] > 0)
-        {
-            $this->logLevel = (int)$options["level"];
+        if($clear) {
+            self::cleanLog($fileName);
         }
+        Debug::writeToFile(
+            $message,
+            '',
+            'local/logs/log_' . $fileName . '.log'
+        );
     }
 
     /**
-     * @param \Throwable $exception
-     * @param int $logType
+     * @param string $fileName
+     * @return void
      */
-    public function write($exception, $logType): void
+    public static function cleanLog(string $fileName = 'custom'): void
     {
-        $text = ExceptionHandlerFormatter::format($exception, false, $this->logLevel);
-
-        $context = [
-            'type' => static::logTypeToString($logType),
-        ];
-
-        $logLevel = static::logTypeToLevel($logType);
-
-        $message = "OTUS: {date} - Host: {host} - {type} - {$text}\n";
-
-        $this->logger->log($logLevel, $message, $context);
-    }
-
-    public function test()
-    {
-        dump($_SERVER);
+        file_put_contents($_SERVER["DOCUMENT_ROOT"] . '/local/logs/log_' . $fileName . '.log', '');
     }
 }
