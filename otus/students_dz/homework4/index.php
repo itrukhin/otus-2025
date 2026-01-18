@@ -26,11 +26,21 @@ Loader::includeModule('iblock');
 /*
  * Выбираем всех врачей по отделениям, вместе с процедурами
  */
+$connection = Bitrix\Main\Application::getConnection();
+$tracker = $connection->startTracker();
 $rows = OtusClinicTable::getList([
     'select' => ['*', 'DOCTOR', 'DOCTOR.PROCEDURES', 'PROCEDURE']
 ])->fetchAll();
+$connection->stopTracker();
 
 dump($rows);
 
+echo '<pre>';
+foreach ($tracker->getQueries() as $query) {
+    // текст запроса
+    var_dump($query->getSql());
+    echo '<br><br>';
+}
+echo '</pre>';
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");
