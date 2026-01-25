@@ -23,6 +23,7 @@ class CurrenciesComponent extends CBitrixComponent
                 if($currency->getCurrency() == $this->arParams['CURRENCY']) {
                     $this->arResult['RATE'] = $currency->getAmount();
                     $this->arResult['AMOUNT_CNT'] = $currency->getAmountCnt();
+                    break;
                 }
             }
         }
