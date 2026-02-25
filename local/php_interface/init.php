@@ -6,6 +6,8 @@ if(file_exists(__DIR__ . '/../App/autoload.php')) {
     require_once __DIR__ . '/../App/autoload.php';
 }
 
+use Bitrix\Main\EventManager;
+
 // вывод данных
 function pr($var, $type = false) {
     echo '<pre style="font-size:10px; border:1px solid #000; background:#FFF; text-align:left; color:#000;">';
@@ -15,3 +17,15 @@ function pr($var, $type = false) {
         print_r($var);
     echo '</pre>';
 }
+
+\Bitrix\Main\Loader::includeModule('otus.demo');
+$eventManager = EventManager::getInstance();
+
+$eventManager->AddEventHandler(
+    'iblock',
+    'OnIBlockPropertyBuildList',
+    [
+        '\App\UserTypes\IBLink', // класс обработчик пользовательского типа свойства
+        'GetUserTypeDescription'
+    ]
+);
