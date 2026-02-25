@@ -59,6 +59,14 @@ class otus_demo extends CModule
             '\\Otus\\Demo\\Handlers',
             'updateTabs'
         );
+
+        $eventManager->registerEventHandler(
+            'iblock',
+            'OnIBlockPropertyBuildList',
+            $this->MODULE_ID,
+            '\\Otus\\Demo\\UserTypes\\AppointmentType',
+            'getUserTypeDescription'
+        );
     }
 
     public function UnInstallEvents(): void
@@ -71,6 +79,14 @@ class otus_demo extends CModule
             $this->MODULE_ID,
             '\\Otus\\Demo\\Handlers',
             'updateTabs'
+        );
+
+        $eventManager->unRegisterEventHandler(
+            'iblock',
+            'OnIBlockPropertyBuildList',
+            $this->MODULE_ID,
+            '\\Otus\\Demo\\UserTypes\\AppointmentType',
+            'getUserTypeDescription'
         );
     }
 }
