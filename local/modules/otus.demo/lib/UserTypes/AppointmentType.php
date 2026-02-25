@@ -102,12 +102,13 @@ class AppointmentType extends \CIBlockPropertyElementList
         $formHtml = <<<FORM
 <form id="recordPatientForm_##ID##">
 	<div class="form-row">
-		<label for="patientName">Имя пациента:</label>
+		<label for="patientName_##ID##">Имя пациента:</label>
 		<input type="text" id="patientName_##ID##" name="patientName" required>
 	</div>
 	<div class="form-row">
-		<label for="appointmentTime">Время записи:</label>
-		<input type="datetime-local" id="appointmentTime_##ID##" name="appointmentTime" required>
+		<label for="appointmentTime_##ID##">Время записи:</label>
+        <input type="datetime-local" id="appointmentTime_##ID##" name="appointmentTime" required>
+<!--		<input type="text" id="appointmentTime_##ID##" name="appointmentTime" required  onclick="BX.calendar({node: this, field: this, bTime: true});">-->
 	</div>
 </form>
 FORM;
@@ -119,27 +120,44 @@ FORM;
         <a href="#" id="recordPatient_##ID##">Записать на ##NAME##</a>
     </div>
 
-    <script>
+        <script>
         BX.ready(function() {
+            var dialog_##ID## = null;
+
             BX.bind(BX('recordPatient_##ID##'), 'click', function(e) {
                 e.preventDefault();
-                
-                var dialog_##ID## = new BX.PopupWindow('record_patient_dialog_##ID##', this, {
+
+                // Уничтожаем старый диалог, если был
+                if (dialog_##ID##) {
+                    dialog_##ID##.destroy();
+                }
+
+                // Создаём новый диалог каждый раз
+                dialog_##ID## = new BX.PopupWindow('record_patient_dialog_##ID##', this, {
                     autoHide: true,
-                    offsetLeft: 0,
-                    offsetTop: 0,
-                    overlay : true,
-                    draggable: {restrict: false},
+                    overlay: true,
+                    draggable: false,
                     title: 'Запись пациента',
                     closeByEsc: true,
-                    content: '##FORM##',
+                    content: '<div id="dialog-content-##ID##">##FORM##</div>',
+                    onFirstShow: function() {
+                        // Очищаем поля при первом показе
+                        var patientNameInput = BX('patientName_##ID##');
+                        var appointmentTimeInput = BX('appointmentTime_##ID##');
+                        
+                        if (patientNameInput) patientNameInput.value = '';
+                        if (appointmentTimeInput) appointmentTimeInput.value = '';
+                    },
+                    onClose: function() {
+                        // Уничтожаем диалог при закрытии
+                        dialog_##ID##.destroy();
+                    },
                     buttons: [
                         new BX.PopupWindowButton({
                             text: 'Записать',
                             className: 'ui-btn ui-btn-primary',
                             events: {
                                 click: function() {
-                                    var form = BX('recordPatientForm_##ID##');
                                     var patientNameInput = BX('patientName_##ID##');
                                     var appointmentTimeInput = BX('appointmentTime_##ID##');
                                     
@@ -173,12 +191,16 @@ FORM;
                                         alert(response.data.message);
                                         dialog_##ID##.close();
                                     }).catch(function(response) {
-                                        alert('Ошибка при записи пациента');
+                                        var errorMessage = 'Ошибка при записи пациента';
+                                        if (response && response.errors && response.errors.length > 0) {
+                                            errorMessage = response.errors[0].message || errorMessage;
+                                        }
+                                        alert(errorMessage);
                                     });
                                 }
                             }
                         }),
-                        new BX.PopupWindowButton({
+                        new BX.PopupWindowButtonLink({
                             text: 'Отменить',
                             className: 'ui-btn ui-btn-light-border',
                             events: {
@@ -189,7 +211,7 @@ FORM;
                         })
                     ]
                 });
-                
+
                 dialog_##ID##.show();
             });
         });

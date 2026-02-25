@@ -51,8 +51,27 @@ class AppointmentController extends Controller
 
         try {
             Loader::includeModule('iblock');
-
+            //throw new \Exception("test");
+            Debug::dumpToFile($appointmentTime);
             $dateTime = new DateTime($appointmentTime, "Y-m-d\TH:i:s");
+            Debug::dumpToFile($dateTime);
+            $exFilter = [
+                'IBLOCK_ID' => 18,
+                'PROPERTY_APPOINTMENT_TIME' => $dateTime->format('Y-m-d H:i:s'),
+                'PROPERTY_PROCEDURE' => $procedureId
+            ];
+            $existingElement = \CIBlockElement::GetList([], $exFilter, false, false, ['ID'])->Fetch();
+
+            Debug::dumpToFile(print_r($exFilter, true));
+            Debug::dumpToFile($existingElement);
+            if ($existingElement) {
+                return [
+                    'success' => false,
+                    'message' => 'На это время ' . $dateTime->format('d.m.Y H:i:s') . ' уже есть запись'
+                ];
+            }
+
+
             $name = sprintf("%s (%s) - [%d]", $patientName, $appointmentTime, $procedureId);
             $fields = [
                 'IBLOCK_ID' => 18, // ID инфоблока с записями на процедуры'
@@ -64,7 +83,7 @@ class AppointmentController extends Controller
                     'PATIENT' => $patientName,
                 ],
             ];
-            Debug::dumpToFile(print_r($fields, true));
+            //Debug::dumpToFile(print_r($fields, true));
             $ib = new \CIBlockElement();
             $id = $ib->Add($fields);
             if(!$id) {
@@ -84,7 +103,7 @@ class AppointmentController extends Controller
             ];
             
         } catch (\Exception $e) {
-            Debug::dumpToFile($e);
+            Debug::dumpToFile($e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Ошибка при записи пациента: ' . $e->getMessage()
