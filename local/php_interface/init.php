@@ -29,3 +29,5 @@ $eventManager->AddEventHandler(
         'GetUserTypeDescription'
     ]
 );
+
+require __DIR__ . '/extensions.php';
