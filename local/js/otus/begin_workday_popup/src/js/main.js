@@ -73,3 +73,17 @@ BX.addCustomEvent('onTimeManWindowBuild', function (event) {
     console.log(event);
     alert('onTimeManWindowBuild');
 });
+BX.addCustomEvent('onTMClockRegister', function (event) {
+    console.log(event);
+    alert('onTMClockRegister');
+    // Удаляем все элементы с ID, начинающимся на "timeman_time_selector_popup"
+    document.querySelectorAll('[id^="timeman_time_selector_popup"]').forEach(function (element) {
+        element.remove();
+    });
+    // Удаляем все элементы с ID, начинающимся на "timeman_edit_popup_"
+    document.querySelectorAll('[id^="timeman_edit_popup_"]').forEach(function (element) {
+        element.remove();
+    });
+});
+
+
