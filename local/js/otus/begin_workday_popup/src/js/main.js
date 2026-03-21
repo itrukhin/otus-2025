@@ -4,8 +4,8 @@ BX.Otus.BeginWorkdayPopup = {
     showMessage: function ($message) {
         alert($message);
     },
-    onStartWorkingDateAction: function (popupNodeId) {
-        var popup = BX.PopupWindowManager.create("greeting-popup", BX(popupNodeId), {
+    onStartWorkingDateAction: function (popupNodeId, state) {
+        let popup = BX.PopupWindowManager.create("greeting-popup", BX(popupNodeId), {
             content: 'Вы хотите начать рабочий день?',
             width: 600,
             height: 400,
@@ -31,51 +31,130 @@ BX.Otus.BeginWorkdayPopup = {
             },
             buttons: [
                 new BX.PopupWindowButton({
-                    text: "Да",
-                    id: "btn_yes",
-                    className: "ui-btn ui-btn-success",
+                    text: "Начать",
+                    id: "btn_start",
+                    className: "ui-btn ui-btn-success" + (state === 'OPENED' || state === 'PAUSED' ? ' ui-btn-disabled' : ''),
                     events: {
                         click: function () {
-                            BX.Otus.BeginWorkdayPopup.startDate();
+                            BX.ajax.runAction('otus:demo.controllers.TimemanController.startWork').then(
+                                function(response) {
+                                    if (response.data.status === 'success') {
+                                        console.log('Успех:', response.data);
+                                        alert(response.data.message);
+                                    } else {
+                                        alert('Ошибка: ' + response.data.message);
+                                    }
+                                }
+                            );
+                            this.popupWindow.close();
                         }
                     }
                 }),
                 new BX.PopupWindowButton({
-                    text: "Нет",
-                    id: "btn_no",
-                    className: "ui-btn ui-btn-success",
+                    text: "Остановить",
+                    id: "btn_stop",
+                    className: "ui-btn ui-btn-danger" + (state === 'CLOSED' ? ' ui-btn-disabled' : ''),
                     events: {
                         click: function () {
-                            popup.close();
+                            BX.ajax.runAction('otus:demo.controllers.TimemanController.stopWork').then(
+                                function(response) {
+                                    if (response.data.status === 'success') {
+                                        console.log('Успех:', response.data);
+                                        alert(response.data.message);
+                                    } else {
+                                        alert('Ошибка: ' + response.data.message);
+                                    }
+                                }
+                            );
+                            this.popupWindow.close();
+                        }
+                    }
+                }),
+                new BX.PopupWindowButton({
+                    text: "Пауза",
+                    id: "btn_pause",
+                    className: "ui-btn ui-btn-warning" + (state === 'PAUSED' || state === 'CLOSED' ? ' ui-btn-disabled' : ''),
+                    events: {
+                        click: function () {
+                            BX.ajax.runAction('otus:demo.controllers.TimemanController.pauseWork').then(
+                                function(response) {
+                                    if (response.data.status === 'success') {
+                                        console.log('Успех:', response.data);
+                                        alert(response.data.message);
+                                    } else {
+                                        alert('Ошибка: ' + response.data.message);
+                                    }
+                                }
+                            );
+                            this.popupWindow.close();
+                        }
+                    }
+                }),
+                new BX.PopupWindowButton({
+                    text: "Возобновить",
+                    id: "btn_restart",
+                    className: "ui-btn ui-btn-success" + (state === 'OPENED' ? ' ui-btn-disabled' : ''),
+                    events: {
+                        click: function () {
+                            BX.ajax.runAction('otus:demo.controllers.TimemanController.restartWork').then(
+                                function(response) {
+                                    if (response.data.status === 'success') {
+                                        console.log('Успех:', response.data);
+                                        alert(response.data.message);
+                                    } else {
+                                        alert('Ошибка: ' + response.data.message);
+                                    }
+                                }
+                            );
+                            this.popupWindow.close();
                         }
                     }
                 })
-            ],
-            events: {
-                onPopupClose: function () {
-                    BX.Otus.BeginWorkdayPopup.showMessage('Закрыто');
-                },
-                onPopupShow: function () {
-                    BX.Otus.BeginWorkdayPopup.showMessage('Открыто');
-                }
-            }
+            ]
+            // ,
+            // events: {
+            //     onPopupClose: function () {
+            //         BX.Otus.BeginWorkdayPopup.showMessage('Закрыто');
+            //     },
+            //     onPopupShow: function () {
+            //         BX.Otus.BeginWorkdayPopup.showMessage('Открыто');
+            //     }
+            // }
 
         }).show();
-    },
-    startDate: function () {
-        BX.ajax.runComponentAction('otus:begin-workday-popup', 'startWorkday', {
-            data: {}
-        });
     }
 };
 
 BX.addCustomEvent('onTimeManWindowBuild', function (event) {
     console.log(event);
-    alert('onTimeManWindowBuild');
+    /*
+    "STATE:CLOSED|CAN_OPEN:REOPEN|CAN_EDIT:Y/DATE_START:1774086573|DATE_FINISH:1774087036|TIME_LEAKS:134"
+     */
+    let mainRowState = event.MAIN_ROW_STATE;
+    // Разделяем строку по символу "|" и ищем часть, начинающуюся с "STATE:"
+    let state = null;
+    mainRowState.split('|').forEach(function (part) {
+        if (part.startsWith('STATE:')) {
+            state = part.substring(6); // Убираем "STATE:" и получаем значение
+        }
+    });
+
+    // Теперь state содержит нужное значение, например: "CLOSED"
+    // OPENED | CLOSED | PAUSED
+    alert('Состояние: ' + state);
+
+    //Удаляем окно с ИД timeman_main
+    if (BX('timeman_main')) {
+        BX('timeman_main').remove();
+    }
+
+    BX.Otus.BeginWorkdayPopup.onStartWorkingDateAction('', state);
+
+    //alert('onTimeManWindowBuild');
 });
 BX.addCustomEvent('onTMClockRegister', function (event) {
     console.log(event);
-    alert('onTMClockRegister');
+    alert('Ручное редактирование рабочего дня запрещено!');
     // Удаляем все элементы с ID, начинающимся на "timeman_time_selector_popup"
     document.querySelectorAll('[id^="timeman_time_selector_popup"]').forEach(function (element) {
         element.remove();
